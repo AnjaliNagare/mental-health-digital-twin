@@ -2,13 +2,16 @@ const OLLAMA_URL = "http://localhost:11434/api/generate";
 const MODEL = "llama3.2";
 
 async function analyzeWithOllama(entries, avgStress, avgSleep, warnings) {
-
-  const entrySummary = entries.map((e, i) => {
-    const date = new Date(e.timestamp).toLocaleDateString("en-GB", {
-      weekday: "short", day: "numeric", month: "short"
-    });
-    return `Entry ${i + 1} (${date}): mood=${e.mood}, stress=${e.stress_level}/10, sleep=${e.sleep_hours}h${e.note ? `, note: "${e.note}"` : ""}`;
-  }).join("\n");
+  const entrySummary = entries
+    .map((e, i) => {
+      const date = new Date(e.timestamp).toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+      });
+      return `Entry ${i + 1} (${date}): mood=${e.mood}, stress=${e.stress_level}/10, sleep=${e.sleep_hours}h${e.note ? `, note: "${e.note}"` : ""}`;
+    })
+    .join("\n");
 
   const prompt = `You are a compassionate mental health support assistant. A user has shared their recent mood tracking data. Analyse it carefully and respond with empathy.
 
@@ -18,7 +21,7 @@ ${entrySummary}
 Summary statistics:
 - Average stress level: ${avgStress}/10
 - Average sleep: ${avgSleep} hours
-- Moods logged: ${entries.map(e => e.mood).join(", ")}
+- Moods logged: ${entries.map((e) => e.mood).join(", ")}
 ${warnings.length > 0 ? `- Detected patterns: ${warnings.join("; ")}` : ""}
 
 Respond ONLY with a valid JSON object. No explanation before or after it. No markdown. No backticks. Just raw JSON in this exact structure:
@@ -33,20 +36,20 @@ Respond ONLY with a valid JSON object. No explanation before or after it. No mar
 
   let response;
 
-try {
-  response = await fetch(OLLAMA_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: MODEL,
-      prompt: prompt,
-      stream: false
-    })
-  });
-} catch (err) {
-  console.error("Fetch failed:", err.message);
-  throw new Error("Ollama is not running");
-}
+  try {
+    response = await fetch(OLLAMA_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: MODEL,
+        prompt: prompt,
+        stream: false,
+      }),
+    });
+  } catch (err) {
+    console.error("Fetch failed:", err.message);
+    throw new Error("Ollama is not running");
+  }
 
   console.log("Ollama response status:", response.status);
 
@@ -62,7 +65,6 @@ try {
     .replace(/```json/g, "")
     .replace(/```/g, "")
     .trim();
-
 
   // Count opening and closing braces and add missing ones
   const openBraces = (cleaned.match(/{/g) || []).length;

@@ -45,7 +45,7 @@ export default function MoodForm({ onMoodAdded }) {
     try {
       const response = await axios.post(
         "http://localhost:5000/mental/add-mood",
-        moodData
+        moodData,
       );
 
       console.log("✅ Mood logged:", response.data);
@@ -65,14 +65,11 @@ export default function MoodForm({ onMoodAdded }) {
       // Auto-hide success message
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-  console.error("❌ Error logging mood:", err);
+      console.error("❌ Error logging mood:", err);
 
-  setError(
-    err.response?.data?.message ||
-    err.message ||
-    "Unknown error occurred"
-  );
-
+      setError(
+        err.response?.data?.message || err.message || "Unknown error occurred",
+      );
     } finally {
       setLoading(false);
     }
@@ -99,7 +96,11 @@ export default function MoodForm({ onMoodAdded }) {
         )}
 
         {error && (
-          <Alert variant="danger" className="mb-3" style={{ borderRadius: "12px" }}>
+          <Alert
+            variant="danger"
+            className="mb-3"
+            style={{ borderRadius: "12px" }}
+          >
             ❌ {error}
           </Alert>
         )}
@@ -107,7 +108,9 @@ export default function MoodForm({ onMoodAdded }) {
         <Form onSubmit={handleSubmit}>
           {/* Mood Selection */}
           <Form.Group className="mb-4">
-            <Form.Label style={{ fontWeight: "600", color: "#333", fontSize: "13px" }}>
+            <Form.Label
+              style={{ fontWeight: "600", color: "#333", fontSize: "13px" }}
+            >
               SELECT YOUR MOOD
             </Form.Label>
             <div className="d-flex flex-wrap gap-2">
@@ -118,7 +121,9 @@ export default function MoodForm({ onMoodAdded }) {
                   onClick={() => setSelectedMood(mood.key)}
                   disabled={loading}
                   className={`btn ${
-                    selectedMood === mood.key ? "btn-primary" : "btn-outline-secondary"
+                    selectedMood === mood.key
+                      ? "btn-primary"
+                      : "btn-outline-secondary"
                   }`}
                   style={{
                     borderRadius: "12px",
@@ -132,7 +137,8 @@ export default function MoodForm({ onMoodAdded }) {
                       selectedMood === mood.key
                         ? "linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)"
                         : "white",
-                    transform: selectedMood === mood.key ? "scale(1.2)" : "scale(1)",
+                    transform:
+                      selectedMood === mood.key ? "scale(1.2)" : "scale(1)",
                     transition: "all 0.3s ease",
                     boxShadow:
                       selectedMood === mood.key
@@ -152,7 +158,10 @@ export default function MoodForm({ onMoodAdded }) {
             <div className="d-flex align-items-center justify-content-between mb-2">
               <div className="d-flex align-items-center gap-2">
                 <Activity size={16} style={{ color: "#FF5722" }} />
-                <Form.Label className="mb-0" style={{ fontWeight: "600", color: "#333" }}>
+                <Form.Label
+                  className="mb-0"
+                  style={{ fontWeight: "600", color: "#333" }}
+                >
                   💨 Stress Level
                 </Form.Label>
               </div>
@@ -193,7 +202,10 @@ export default function MoodForm({ onMoodAdded }) {
             <div className="d-flex align-items-center justify-content-between mb-2">
               <div className="d-flex align-items-center gap-2">
                 <Moon size={16} style={{ color: "#3F51B5" }} />
-                <Form.Label className="mb-0" style={{ fontWeight: "600", color: "#333" }}>
+                <Form.Label
+                  className="mb-0"
+                  style={{ fontWeight: "600", color: "#333" }}
+                >
                   🌙 Hours of Sleep
                 </Form.Label>
               </div>

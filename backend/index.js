@@ -17,7 +17,7 @@ const MOOD_SCORE = {
   anxious: 3,
   sad: 2,
   overwhelmed: 1,
-  angry: 2
+  angry: 2,
 };
 
 function detectWarnings(entries) {
@@ -27,25 +27,27 @@ function detectWarnings(entries) {
 
   const recent = entries.slice(0, 3);
 
-  const highStressEntries = recent.filter(e => e.stress_level >= 7);
+  const highStressEntries = recent.filter((e) => e.stress_level >= 7);
   if (highStressEntries.length >= 2) {
     warnings.push(
-      `Your stress levels have been consistently high for the past ${highStressEntries.length} entries.`
+      `Your stress levels have been consistently high for the past ${highStressEntries.length} entries.`,
     );
   }
 
-  const lowSleepEntries = recent.filter(e => e.sleep_hours < 6);
+  const lowSleepEntries = recent.filter((e) => e.sleep_hours < 6);
   if (lowSleepEntries.length >= 2) {
     warnings.push(
-      `You've had low sleep (under 6h) in ${lowSleepEntries.length} recent entries.`
+      `You've had low sleep (under 6h) in ${lowSleepEntries.length} recent entries.`,
     );
   }
 
   const negativeMoods = ["sad", "anxious", "overwhelmed", "angry"];
-  const negativeCount = recent.filter(e => negativeMoods.includes(e.mood)).length;
+  const negativeCount = recent.filter((e) =>
+    negativeMoods.includes(e.mood),
+  ).length;
   if (negativeCount >= 2) {
     warnings.push(
-      `You've logged predominantly negative moods recently (${negativeCount} out of ${recent.length} entries).`
+      `You've logged predominantly negative moods recently (${negativeCount} out of ${recent.length} entries).`,
     );
   }
 
@@ -54,7 +56,7 @@ function detectWarnings(entries) {
   const drop = previousScore - latestScore;
   if (drop >= 3) {
     warnings.push(
-      `Significant mood drop detected: from "${entries[1].mood}" to "${entries[0].mood}".`
+      `Significant mood drop detected: from "${entries[1].mood}" to "${entries[0].mood}".`,
     );
   }
 
@@ -76,7 +78,7 @@ app.post("/mental/add-mood", (req, res) => {
     stress_level: Number(stress_level) || 5,
     sleep_hours: Number(sleep_hours) || 7,
     note: note || "",
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   if (!moodStore[user_id]) {
@@ -88,8 +90,7 @@ app.post("/mental/add-mood", (req, res) => {
   res.status(201).json({ success: true, entry });
 });
 
-
-// GET /mental/history 
+// GET /mental/history
 app.get("/mental/history", (req, res) => {
   const { user_id, limit = 10 } = req.query;
 
@@ -116,7 +117,7 @@ app.post("/mental/analyze", async (req, res) => {
 
   if (entries.length === 0) {
     return res.status(400).json({
-      error: "No mood entries found. Please log at least one mood first."
+      error: "No mood entries found. Please log at least one mood first.",
     });
   }
 
@@ -132,29 +133,34 @@ app.post("/mental/analyze", async (req, res) => {
 
   try {
     console.log("Calling Ollama for analysis...");
-    const insight = await analyzeWithOllama(entries, avgStress, avgSleep, warnings);
+    const insight = await analyzeWithOllama(
+      entries,
+      avgStress,
+      avgSleep,
+      warnings,
+    );
     console.log("Ollama responded successfully");
 
     res.json({
-  success: true,
-  user_id,
-  source: "ollama",
-  analysis: {
-    ...insight,
-    data_used: {
-      entries_analysed: entries.length,
-      avg_stress: avgStress,
-      avg_sleep: avgSleep,
-      moods_logged: entries.map(e => e.mood).join(", "),
-      warnings
-    }
-  }
-});
-
+      success: true,
+      user_id,
+      source: "ollama",
+      analysis: {
+        ...insight,
+        data_used: {
+          entries_analysed: entries.length,
+          avg_stress: avgStress,
+          avg_sleep: avgSleep,
+          moods_logged: entries.map((e) => e.mood).join(", "),
+          warnings,
+        },
+      },
+    });
   } catch (error) {
     console.error("Ollama error:", error.message);
     res.status(500).json({
-      error: "Ollama AI analysis failed. Make sure Ollama is running with: ollama serve"
+      error:
+        "Ollama AI analysis failed. Make sure Ollama is running with: ollama serve",
     });
   }
 });

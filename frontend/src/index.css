@@ -104,35 +104,7 @@ body, html {
 
 
 /* ========== BUTTONS ========== */
-.btn-signup {
-  background-color: white;
-  color: #8B5CF6;
-  border: none;
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  font-weight: 600;
-}
 
-.btn-signup:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-  transform: scale(1.02);
-  color: #8B5CF6;
-}
-
-.btn-login {
-  border-color: rgba(255, 255, 255, 0.3);
-  color: white;
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  background-color: rgb(139, 92, 246);
-  font-weight: 600;
-}
-
-.btn-login:hover {
-  background-color: rgb(120, 72, 225);
-  transform: scale(1.02);
-  border-color: rgba(255, 255, 255, 0.5);
-}
 
 button {
   transition: all 0.2s ease;

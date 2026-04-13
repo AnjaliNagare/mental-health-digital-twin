@@ -15,19 +15,19 @@ export default function AIInsight() {
     try {
       const response = await axios.post(
         "http://localhost:5000/mental/analyze",
-        { user_id: "user_01", limit: 5 }
+        { user_id: "user_01", limit: 5 },
       );
 
       console.log("✅ AI Analysis:", response.data);
       setInsight(response.data.analysis);
     } catch (err) {
       console.error("❌ Error generating insight:", err);
-      
+
       if (err.response?.status === 400) {
         setError(err.response.data.error);
       } else {
         setError(
-          "Failed to generate insight. Make sure Ollama is running: ollama serve"
+          "Failed to generate insight. Make sure Ollama is running: ollama serve",
         );
       }
     } finally {
@@ -50,7 +50,10 @@ export default function AIInsight() {
         <div className="d-flex align-items-center justify-content-between mb-4">
           <div className="d-flex align-items-center gap-2">
             <Brain size={24} style={{ color: "#8B5CF6" }} />
-            <h5 className="mb-0" style={{ color: "#8B5CF6", fontWeight: "bold" }}>
+            <h5
+              className="mb-0"
+              style={{ color: "#8B5CF6", fontWeight: "bold" }}
+            >
               🤖 AI Insight Analysis
             </h5>
           </div>
@@ -117,7 +120,10 @@ export default function AIInsight() {
             >
               <Card.Body className="p-4">
                 <div className="d-flex align-items-start gap-2 mb-2">
-                  <Lightbulb size={20} style={{ color: "#8B5CF6", marginTop: "2px" }} />
+                  <Lightbulb
+                    size={20}
+                    style={{ color: "#8B5CF6", marginTop: "2px" }}
+                  />
                   <div>
                     <h6
                       className="mb-2"
@@ -125,7 +131,10 @@ export default function AIInsight() {
                     >
                       💡 Your Insight
                     </h6>
-                    <p className="mb-0" style={{ color: "#333", lineHeight: "1.6" }}>
+                    <p
+                      className="mb-0"
+                      style={{ color: "#333", lineHeight: "1.6" }}
+                    >
                       {insight.insight}
                     </p>
                   </div>
@@ -143,7 +152,10 @@ export default function AIInsight() {
             >
               <Card.Body className="p-4">
                 <div className="d-flex align-items-start gap-2">
-                  <Info size={20} style={{ color: "#0EA5E9", marginTop: "2px" }} />
+                  <Info
+                    size={20}
+                    style={{ color: "#0EA5E9", marginTop: "2px" }}
+                  />
                   <div>
                     <h6
                       className="mb-2"
@@ -151,7 +163,10 @@ export default function AIInsight() {
                     >
                       💊 Recommendation
                     </h6>
-                    <p className="mb-0" style={{ color: "#333", lineHeight: "1.6" }}>
+                    <p
+                      className="mb-0"
+                      style={{ color: "#333", lineHeight: "1.6" }}
+                    >
                       {insight.recommendation}
                     </p>
                   </div>
@@ -195,19 +210,20 @@ export default function AIInsight() {
                 </h6>
                 <div style={{ fontSize: "14px", color: "#555" }}>
                   <p className="mb-2">
-                    <strong>Analyzed:</strong> {insight.data_used.entries_analysed}{" "}
-                    recent mood entries
+                    <strong>Analyzed:</strong>{" "}
+                    {insight.data_used.entries_analysed} recent mood entries
                   </p>
                   <p className="mb-2">
-                    <strong>Moods logged:</strong> {insight.data_used.moods_logged}
+                    <strong>Moods logged:</strong>{" "}
+                    {insight.data_used.moods_logged}
                   </p>
                   <p className="mb-2">
                     <strong>Average stress level:</strong>{" "}
                     {insight.data_used.avg_stress}/10
                   </p>
                   <p className="mb-0">
-                    <strong>Average sleep:</strong> {insight.data_used.avg_sleep}{" "}
-                    hours
+                    <strong>Average sleep:</strong>{" "}
+                    {insight.data_used.avg_sleep} hours
                   </p>
                 </div>
               </Card.Body>

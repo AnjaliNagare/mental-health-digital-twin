@@ -132,7 +132,10 @@ export default function MoodHistory({ refreshKey }) {
             }}
           >
             <strong style={{ color: "#92400E" }}>⚠️ Alerts:</strong>
-            <ul className="mb-0 mt-2" style={{ fontSize: "14px", color: "#92400E" }}>
+            <ul
+              className="mb-0 mt-2"
+              style={{ fontSize: "14px", color: "#92400E" }}
+            >
               {warnings.map((warning, idx) => (
                 <li key={idx}>{warning}</li>
               ))}
@@ -156,7 +159,8 @@ export default function MoodHistory({ refreshKey }) {
                     transition: "all 0.2s ease",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 12px rgba(0,0,0,0.1)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.boxShadow = "none";
@@ -178,7 +182,8 @@ export default function MoodHistory({ refreshKey }) {
                               fontSize: "11px",
                             }}
                           >
-                            {entry.mood.charAt(0).toUpperCase() + entry.mood.slice(1)}
+                            {entry.mood.charAt(0).toUpperCase() +
+                              entry.mood.slice(1)}
                           </Badge>
                           <div
                             className="d-flex align-items-center gap-1 mt-1"
@@ -192,7 +197,10 @@ export default function MoodHistory({ refreshKey }) {
                     </div>
 
                     {/* Stats */}
-                    <div className="d-flex gap-4 mb-2" style={{ marginLeft: "48px" }}>
+                    <div
+                      className="d-flex gap-4 mb-2"
+                      style={{ marginLeft: "48px" }}
+                    >
                       <div
                         className="d-flex align-items-center gap-1"
                         style={{ fontSize: "13px", color: "#6B7280" }}
