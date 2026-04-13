@@ -56,7 +56,7 @@ export default function MoodHistory({ refreshKey }) {
   const fetchMoodHistory = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:5000/mental/history", {
+      const response = await axios.get("https://mental-health-digital-twin-1.onrender.com/mental/history", {
         params: {
           user_id: "user_01",
           limit: 20,

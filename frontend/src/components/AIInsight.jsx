@@ -14,7 +14,7 @@ export default function AIInsight() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/mental/analyze",
+        "https://mental-health-digital-twin-1.onrender.com/mental/analyze",
         { user_id: "user_01", limit: 5 },
       );
 
