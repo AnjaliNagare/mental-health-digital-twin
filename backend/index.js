@@ -3,8 +3,15 @@ const cors = require("cors");
 const { analyzeWithOllama } = require("./ollamaService");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://mental-health-digital-twin-mkoj.vercel.app/"
+}));
 app.use(express.json());
+
+const client = new OpenAI({
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
+});
 
 const PORT = process.env.PORT || 5000;
 

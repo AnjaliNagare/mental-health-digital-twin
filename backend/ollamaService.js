@@ -1,5 +1,5 @@
 const OLLAMA_URL = "http://localhost:11434/api/generate";
-const MODEL = "llama3.2";
+const MODEL ="meta-llama/llama-3-8b-instruct"
 
 async function analyzeWithOllama(entries, avgStress, avgSleep, warnings) {
   const entrySummary = entries
