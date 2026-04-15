@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 
 const OpenRouter_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-const MODEL = "meta-llama/llama-3-8b-instruct";
+const MODEL = "openai/gpt-4o-mini";
 
 async function analyzeWithOllama(entries, avgStress, avgSleep, warnings) {
   const entrySummary = entries
