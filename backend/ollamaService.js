@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-const OLLAMA_URL = "https://openrouter.ai/api/v1/chat/completions";
+const OpenRouter_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 const MODEL = "meta-llama/llama-3-8b-instruct";
 
@@ -21,54 +21,62 @@ Avg stress: ${avgStress}
 Avg sleep: ${avgSleep}
 Warnings: ${warnings.join(", ")}
 
-Respond ONLY in JSON:
+Respond ONLY in valid JSON:
 {
-  "emotional_insight": "...",
-  "recommendation": "...",
-  "data_explanation": "...",
-  "supportive_note": "..."
+  "emotional_insight": "",
+  "recommendation": "",
+  "data_explanation": "",
+  "supportive_note": ""
 }
 `;
 
+  const response = await fetch(OLLAMA_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": "https://mental-health-digital-twin-mkoj.vercel.app",
+      "X-Title": "Mental Health App",
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      messages: [
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.3
+    }),
+  });
+
+  const data = await response.json();
+
+  console.log("🧠 RAW RESPONSE:", data);
+
+  if (!response.ok) {
+    throw new Error(data.error?.message || JSON.stringify(data));
+  }
+
+  let text = data?.choices?.[0]?.message?.content;
+
+  if (!text) {
+    throw new Error("Empty AI response");
+  }
+
+  // ✅ SAFE JSON extraction (VERY IMPORTANT FIX)
   try {
-    const response = await fetch(OLLAMA_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://mental-health-digital-twin-mkoj.vercel.app",
-        "X-Title": "Mental Health App",
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-      }),
-    });
-
-    const data = await response.json();
-
-    console.log("🧠 OpenRouter RAW:", data);
-
-    if (!response.ok) {
-      throw new Error(JSON.stringify(data));
-    }
-
-    const text = data.choices?.[0]?.message?.content;
-
-    if (!text) {
-      throw new Error("No response from AI");
-    }
+    // remove ```json blocks if present
+    text = text.replace(/```json|```/g, "").trim();
 
     return JSON.parse(text);
+  } catch (err) {
+    console.error("❌ JSON PARSE FAILED. RAW TEXT:\n", text);
 
-  } catch (error) {
-    console.error("❌ OpenRouter Error:", error.message);
-    throw error;
+    // fallback so backend never crashes
+    return {
+      emotional_insight: "AI returned malformed response.",
+      recommendation: "Try again.",
+      data_explanation: text,
+      supportive_note: "System recovered from parsing error."
+    };
   }
 }
 
