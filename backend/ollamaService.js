@@ -1,86 +1,75 @@
-const OLLAMA_URL = "http://localhost:11434/api/generate";
-const MODEL ="meta-llama/llama-3-8b-instruct"
+const fetch = require("node-fetch");
+
+const OLLAMA_URL = "https://openrouter.ai/api/v1/chat/completions";
+
+const MODEL = "meta-llama/llama-3-8b-instruct";
 
 async function analyzeWithOllama(entries, avgStress, avgSleep, warnings) {
   const entrySummary = entries
     .map((e, i) => {
-      const date = new Date(e.timestamp).toLocaleDateString("en-GB", {
-        weekday: "short",
-        day: "numeric",
-        month: "short",
-      });
-      return `Entry ${i + 1} (${date}): mood=${e.mood}, stress=${e.stress_level}/10, sleep=${e.sleep_hours}h${e.note ? `, note: "${e.note}"` : ""}`;
+      return `Entry ${i + 1}: mood=${e.mood}, stress=${e.stress_level}, sleep=${e.sleep_hours}`;
     })
     .join("\n");
 
-  const prompt = `You are a compassionate mental health support assistant. A user has shared their recent mood tracking data. Analyse it carefully and respond with empathy.
+  const prompt = `
+You are a mental health assistant.
 
-Here is their data:
+User data:
 ${entrySummary}
 
-Summary statistics:
-- Average stress level: ${avgStress}/10
-- Average sleep: ${avgSleep} hours
-- Moods logged: ${entries.map((e) => e.mood).join(", ")}
-${warnings.length > 0 ? `- Detected patterns: ${warnings.join("; ")}` : ""}
+Avg stress: ${avgStress}
+Avg sleep: ${avgSleep}
+Warnings: ${warnings.join(", ")}
 
-Respond ONLY with a valid JSON object. No explanation before or after it. No markdown. No backticks. Just raw JSON in this exact structure:
+Respond ONLY in JSON:
 {
-  "emotional_insight": "2 to 3 sentences acknowledging how they feel and validating their experience",
-  "recommendation": "2 to 3 specific, practical suggestions based on their exact stress and sleep numbers",
-  "data_explanation": "1 sentence explaining which specific data points led to this insight",
-  "supportive_note": "One short warm encouraging closing message"
-}`;
-
-  console.log("Sending request to Ollama...");
-
-  let response;
+  "emotional_insight": "...",
+  "recommendation": "...",
+  "data_explanation": "...",
+  "supportive_note": "..."
+}
+`;
 
   try {
-    response = await fetch(OLLAMA_URL, {
+    const response = await fetch(OLLAMA_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://mental-health-digital-twin-mkoj.vercel.app",
+        "X-Title": "Mental Health App",
+      },
       body: JSON.stringify({
         model: MODEL,
-        prompt: prompt,
-        stream: false,
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
       }),
     });
-  } catch (err) {
-    console.error("Fetch failed:", err.message);
-    throw new Error("Ollama is not running");
+
+    const data = await response.json();
+
+    console.log("🧠 OpenRouter RAW:", data);
+
+    if (!response.ok) {
+      throw new Error(JSON.stringify(data));
+    }
+
+    const text = data.choices?.[0]?.message?.content;
+
+    if (!text) {
+      throw new Error("No response from AI");
+    }
+
+    return JSON.parse(text);
+
+  } catch (error) {
+    console.error("❌ OpenRouter Error:", error.message);
+    throw error;
   }
-
-  console.log("Ollama response status:", response.status);
-
-  if (!response.ok) {
-    throw new Error(`Ollama API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  const rawText = data.response.trim();
-
-  let cleaned = rawText
-    .replace(/```json/g, "")
-    .replace(/```/g, "")
-    .trim();
-
-  // Count opening and closing braces and add missing ones
-  const openBraces = (cleaned.match(/{/g) || []).length;
-  const closeBraces = (cleaned.match(/}/g) || []).length;
-  const missingBraces = openBraces - closeBraces;
-
-  for (let i = 0; i < missingBraces; i++) {
-    cleaned = cleaned + "\n}";
-  }
-
-  console.log("Cleaned text:", cleaned);
-
-  const parsed = JSON.parse(cleaned);
-  console.log("Parsed successfully");
-
-  return parsed;
 }
 
 module.exports = { analyzeWithOllama };

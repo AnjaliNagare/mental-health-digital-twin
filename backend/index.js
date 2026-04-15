@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const { analyzeWithOllama } = require("./ollamaService");
 
 const app = express();
 app.use(cors({
@@ -8,10 +7,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
-const client = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
-});
+
 
 const PORT = process.env.PORT || 5000;
 
@@ -139,19 +135,19 @@ app.post("/mental/analyze", async (req, res) => {
   const warnings = detectWarnings(entries);
 
   try {
-    console.log("Calling Ollama for analysis...");
+    console.log("Calling OpenRouter for analysis...");
     const insight = await analyzeWithOllama(
       entries,
       avgStress,
       avgSleep,
       warnings,
     );
-    console.log("Ollama responded successfully");
+    console.log("OpenRouter responded successfully");
 
     res.json({
       success: true,
       user_id,
-      source: "ollama",
+      source: "openrouter",
       analysis: {
         ...insight,
         data_used: {
@@ -164,10 +160,10 @@ app.post("/mental/analyze", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Ollama error:", error.message);
+    console.error("OpenRouter error:", error.message);
     res.status(500).json({
       error:
-        "Ollama AI analysis failed. Make sure Ollama is running with: ollama serve",
+        "OpenRouter AI analysis failed. Make sure the API is running with the correct model and your API key is set.",
     });
   }
 });
