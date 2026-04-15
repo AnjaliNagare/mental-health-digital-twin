@@ -8,32 +8,32 @@ export default function AIInsight() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  
+
   const generateInsight = async () => {
-    setLoading(true);
-    setError("");
+  setLoading(true);
+  setError("");
 
-    try {
-      const response = await axios.post(
-        "https://mental-health-digital-twin-1.onrender.com/mental/analyze",
-        { user_id: "user_01", limit: 5 },
-      );
+  try {
+    const response = await axios.post(
+      "https://mental-health-digital-twin-1.onrender.com/mental/analyze",
+      { user_id: "user_01" }
+    );
 
-      console.log("✅ AI Analysis:", response.data);
-      setInsight(response.data.analysis);
-    } catch (err) {
-      console.error("❌ Error generating insight:", err);
+    console.log("✅ AI Analysis:", response.data);
+    setInsight(response.data.analysis);
+  } catch (err) {
+    console.error("❌ FULL ERROR:", err.response?.data);
 
-      if (err.response?.status === 400) {
-        setError(err.response.data.error);
-      } else {
-        setError(
-          "Failed to generate insight. Make sure Ollama is running: ollama serve",
-        );
-      }
-    } finally {
-      setLoading(false);
+    if (err.response?.status === 400) {
+      setError(err.response.data.error);
+    } else {
+      setError(err.response?.data?.error || "Failed to generate insight.");
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   const cardStyle = {
     backgroundColor: "rgba(255, 255, 255, 0.95)",
@@ -58,7 +58,7 @@ export default function AIInsight() {
             </h5>
           </div>
           <Badge bg="info" pill>
-            Powered by Ollama
+            Powered by OpenRouter AI
           </Badge>
         </div>
 
