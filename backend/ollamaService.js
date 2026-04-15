@@ -30,7 +30,11 @@ Respond ONLY in valid JSON:
 }
 `;
 
-  const response = await fetch(OLLAMA_URL, {
+if (!process.env.OPENROUTER_API_KEY) {
+  throw new Error("OPENROUTER_API_KEY is missing in environment variables");
+}
+
+  const response = await fetch(OpenRouter_URL, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
