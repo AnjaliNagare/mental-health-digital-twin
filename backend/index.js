@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const { analyzeWithGemini } = require("./AIService");
 
 const app = express();
 app.use(cors());
@@ -133,19 +134,19 @@ app.post("/mental/analyze", async (req, res) => {
   const warnings = detectWarnings(entries);
 
   try {
-    console.log("Calling OpenRouter for analysis...");
-    const insight = await analyzeWithOllama(
+    console.log("Calling Gemini for analysis...");
+    const insight = await analyzeWithGemini(
       entries,
       avgStress,
       avgSleep,
       warnings,
     );
-    console.log("OpenRouter responded successfully");
+    console.log("Gemini responded successfully");
 
     res.json({
       success: true,
       user_id,
-      source: "openrouter",
+      source: "gemini",
       analysis: {
         ...insight,
         data_used: {
@@ -158,13 +159,13 @@ app.post("/mental/analyze", async (req, res) => {
       },
     });
   } catch (error) {
-  console.error("❌ OPENROUTER FULL ERROR:");
+  console.error("❌ GEMINI FULL ERROR:");
   console.error("status:", error.response?.status);
   console.error("data:", error.response?.data);
   console.error("message:", error.message);
     res.status(500).json({
       error:
-        "OpenRouter AI analysis failed. Make sure the API is running with the correct model and your API key is set.",
+        "Gemini AI analysis failed. Make sure the API is running with the correct model and your API key is set.",
     });
   }
 });
