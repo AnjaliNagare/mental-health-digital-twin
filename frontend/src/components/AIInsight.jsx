@@ -58,7 +58,7 @@ export default function AIInsight() {
             </h5>
           </div>
           <Badge bg="info" pill>
-            Powered by OpenRouter AI
+            Powered by Gemini AI
           </Badge>
         </div>
 

@@ -160,14 +160,14 @@ app.post("/mental/analyze", async (req, res) => {
     });
   } catch (error) {
   console.error("❌ GEMINI FULL ERROR:");
-  console.error("status:", error.response?.status);
-  console.error("data:", error.response?.data);
   console.error("message:", error.message);
-    res.status(500).json({
-      error:
-        "Gemini AI analysis failed. Make sure the API is running with the correct model and your API key is set.",
-    });
-  }
+  console.error("stack:", error.stack);
+
+  res.status(500).json({
+    error: "Gemini failed",
+    details: error.message
+  });
+}
 });
 
 // Start server
