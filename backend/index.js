@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
-const { analyzeWithGemini } = require("./geminiService"); // ⭐ ADD THIS
+const { analyzeWithAI } = require('./aiService');
+const axios = require("axios");
 
 const app = express();
 app.use(cors());
@@ -131,14 +132,14 @@ app.post("/mental/analyze", async (req, res) => {
   const warnings = detectWarnings(entries);
 
   try {
-    console.log("Calling Gemini AI for analysis...");
-    const insight = await analyzeWithGemini(entries, avgStress, avgSleep, warnings);
-    console.log("Gemini responded successfully");
+    console.log("Calling Ollama local AI...");
+    const insight = await analyzeWithAI(entries, avgStress, avgSleep, warnings);
+    console.log("Ollama responded successfully");
 
     res.json({
       success: true,
       user_id,
-      source: "gemini",
+      source: "ollama",
       analysis: {
         ...insight,
         data_used: {
@@ -152,9 +153,9 @@ app.post("/mental/analyze", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Gemini error:", error.message);
+    console.error("Ollama error:", error.message);
     res.status(500).json({
-      error: "Gemini AI analysis failed. Please check your API key."
+      error: error.message || "Ollama AI analysis failed."
     });
   }
 });

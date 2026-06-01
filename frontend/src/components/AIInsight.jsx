@@ -16,7 +16,7 @@ export default function AIInsight() {
 
   try {
     const response = await axios.post(
-      "https://mental-health-digital-twin-1.onrender.com/mental/analyze",
+      "http://localhost:5000/mental/analyze",
       { user_id: "user_01" }
     );
 
@@ -48,19 +48,18 @@ export default function AIInsight() {
       <Card.Body className="p-4">
         {/* Header */}
         <div className="d-flex align-items-center justify-content-between mb-4">
-          <div className="d-flex align-items-center gap-2">
-            <Brain size={24} style={{ color: "#8B5CF6" }} />
-            <h5
-              className="mb-0"
-              style={{ color: "#8B5CF6", fontWeight: "bold" }}
-            >
-              🤖 AI Insight Analysis
-            </h5>
-          </div>
-          <Badge bg="info" pill>
-            Powered by Gemini AI
-          </Badge>
-        </div>
+  <div className="d-flex align-items-center gap-2">
+    <Brain size={24} style={{ color: "#8B5CF6" }} />
+    <h5 className="mb-0" style={{ color: "#8B5CF6", fontWeight: "bold" }}>
+      🤖 AI Insight Analysis
+    </h5>
+  </div>
+  {insight && (
+    <Badge bg={insight.source === 'gemini-ai' ? 'success' : 'info'} pill>
+      {insight.source === 'gemini-ai' ? '✨ Gemini AI' : '🧠 Smart Analysis'}
+    </Badge>
+  )}
+</div>
 
         <p className="text-muted mb-4">
           Our AI analyzes your recent mood entries and gives you personalized
@@ -236,6 +235,7 @@ export default function AIInsight() {
                 onClick={() => {
                   setInsight(null);
                   setError("");
+                  generateInsight();
                 }}
                 style={{ borderRadius: "12px" }}
               >

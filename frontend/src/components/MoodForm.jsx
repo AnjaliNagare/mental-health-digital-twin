@@ -44,7 +44,7 @@ export default function MoodForm({ onMoodAdded }) {
 
     try {
       const response = await axios.post(
-        "https://mental-health-digital-twin-1.onrender.com/mental/add-mood",
+        "http://localhost:5000/mental/add-mood",
         moodData,
       );
 
