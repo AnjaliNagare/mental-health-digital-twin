@@ -132,14 +132,14 @@ app.post("/mental/analyze", async (req, res) => {
   const warnings = detectWarnings(entries);
 
   try {
-    console.log("Calling Ollama local AI...");
+    console.log("Calling AI service...");
     const insight = await analyzeWithAI(entries, avgStress, avgSleep, warnings);
-    console.log("Ollama responded successfully");
+    console.log("AI responded successfully");
 
     res.json({
       success: true,
       user_id,
-      source: "ollama",
+      source: process.env.USE_CLOUD_AI === "true" ? "groq" : "ollama",
       analysis: {
         ...insight,
         data_used: {

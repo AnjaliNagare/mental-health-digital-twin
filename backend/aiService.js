@@ -195,18 +195,19 @@ function parseAIResponse(text) {
 // ─── Main export — auto-selects provider ────────────────────────────────────
 
 async function analyzeWithAI(entries, avgStress, avgSleep, warnings) {
-  const useGroq = process.env.USE_CLOUD_AI === "true";
+
+  console.log("USE_CLOUD_AI =", process.env.USE_CLOUD_AI);
+  console.log("GROQ_API_KEY exists =", !!process.env.GROQ_API_KEY);
+
+  const useGroq =
+    String(process.env.USE_CLOUD_AI).toLowerCase() === "true";
 
   if (useGroq) {
-    if (!process.env.GROQ_API_KEY) {
-      throw new Error("GROQ_API_KEY is missing from .env");
-    }
-    console.log("☁️  AI provider: Groq (cloud)");
+    console.log("☁️ AI provider: Groq");
     return analyzeWithGroq(entries, avgStress, avgSleep, warnings);
-  } else {
-    console.log("🏠 AI provider: Ollama (local)");
-    return analyzeWithOllama(entries, avgStress, avgSleep, warnings);
   }
-}
 
+  console.log("🏠 AI provider: Ollama");
+  return analyzeWithOllama(entries, avgStress, avgSleep, warnings);
+}
 module.exports = { analyzeWithAI, analyzeWithGroq, analyzeWithOllama };
