@@ -8,7 +8,7 @@ export default function AIInsight() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const generateInsight = async () => {
   setLoading(true);
@@ -16,7 +16,7 @@ export default function AIInsight() {
 
   try {
     const response = await axios.post(
-      "http://localhost:5000/mental/analyze",
+     `${import.meta.env.VITE_API_URL}/mental/analyze`,
       { user_id: "user_01" }
     );
 

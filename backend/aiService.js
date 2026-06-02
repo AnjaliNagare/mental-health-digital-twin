@@ -31,7 +31,7 @@ Keep your tone supportive and non-judgmental.`;
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama3-8b-8192",   // free tier model — fast and capable
+        model: "llama-3.1-8b-instant",   // free tier model — fast and capable
         messages: [{ role: "user", content: prompt }],
         max_tokens: 500,
         temperature: 0.7
@@ -58,6 +58,13 @@ Keep your tone supportive and non-judgmental.`;
 
   } catch (error) {
     console.error("❌ Groq error:", error.message);
+
+if (error.response) {
+  console.error(
+    "Groq response:",
+    JSON.stringify(error.response.data, null, 2)
+  );
+}
 
     if (error.response?.status === 401) {
       throw new Error("Invalid Groq API key. Check your GROQ_API_KEY in .env");

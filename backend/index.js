@@ -153,9 +153,9 @@ app.post("/mental/analyze", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Ollama error:", error.message);
+    console.error("AI error:", error.message);
     res.status(500).json({
-      error: error.message || "Ollama AI analysis failed."
+      error: error.message || "AI analysis failed."
     });
   }
 });
