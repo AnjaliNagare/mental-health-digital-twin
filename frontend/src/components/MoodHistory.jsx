@@ -56,7 +56,7 @@ export default function MoodHistory({ refreshKey }) {
   const fetchMoodHistory = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/mental/analyze`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/mental/history`, {
         params: {
           user_id: "user_01",
           limit: 20,
