@@ -44,7 +44,7 @@ export default function MoodForm({ onMoodAdded }) {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/mental/add-mood",
+        `${import.meta.env.VITE_API_URL}/mental/analyze`,
         moodData,
       );
 
